@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, useLocation } from 'react-router-dom';
 import { getUser } from './oidcService';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const authenticate = async () => {
@@ -12,7 +13,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       setIsAuthenticated(!!user);
       setIsLoading(false);
     };
-    
+
     authenticate();
   }, []);
 
@@ -27,7 +28,12 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
         isAuthenticated ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/login" />
+          <Redirect
+            to={{
+              pathname: '/login',
+              state: { from: location.pathname },
+            }}
+          />
         )
       }
     />

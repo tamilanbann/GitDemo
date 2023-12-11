@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import userManager from './userManager';
 import Login from './Login'; // Your login component
 import Dashboard from './Dashboard'; // Your protected component
 
 const App = () => {
-  const isAuthenticated = !!userManager.getUser() && !userManager.getUser().expired;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authenticate = async () => {
+      const user = await userManager.getUser();
+      setIsAuthenticated(!!user && !user.expired);
+    };
+
+    authenticate();
+  }, []);
 
   const handleLogin = () => {
     userManager.signinRedirect();
@@ -30,3 +39,4 @@ const App = () => {
 };
 
 export default App;
+

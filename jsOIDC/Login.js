@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react';
-import { userManager } from './oidcService';
-import { useLocation, useHistory } from 'react-router-dom';
+import userManager from './userManager';
 
 const Login = () => {
-  const location = useLocation();
-  const history = useHistory();
-
   useEffect(() => {
-    const completeLogin = async () => {
-      await userManager.signinRedirectCallback();
-      const { state } = location;
-      const redirectPath = state?.from || '/'; // Default redirect path if state.from is undefined
-
-      history.push(redirectPath);
+    const login = async () => {
+      try {
+        await userManager.signinRedirect();
+      } catch (error) {
+        console.error('Error during login redirect:', error);
+      }
     };
 
-    completeLogin();
-  }, [history, location]);
+    login();
+  }, []);
 
-  return <div>Logging in...</div>;
+  return (
+    <div>
+      <p>Redirecting to login...</p>
+      {/* You can add a loading spinner or other UI elements here */}
+    </div>
+  );
 };
 
 export default Login;
